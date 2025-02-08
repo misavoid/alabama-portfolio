@@ -1,14 +1,24 @@
-<script>
-    function handleSubmit(event) {
+<script lang="ts">
+    async function handleSubmit(event: SubmitEvent) {
         event.preventDefault();
-        const formData = new FormData(event.target);
-        const data = Object.fromEntries(formData);
-        console.log("Form submitted:", data);
-        // Optionally display a success message or send the data to an API.
-        event.target.reset();
+        const formData = new FormData(event.target as HTMLFormElement);
+        const data = Object.fromEntries(formData.entries());
+
+        const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert("Message sent successfully!");
+            (event.target as HTMLFormElement).reset();
+        } else {
+            alert("There was an error sending your message. Please try again later.");
+        }
     }
 </script>
-
 
 <main class="contact-container">
     <h1>Contact Me</h1>
